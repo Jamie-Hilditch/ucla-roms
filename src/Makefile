@@ -1,100 +1,51 @@
-# Makefile for UCLA ROMS model
+# Makefile for UCLA ROMS model using mpifort
 #========== ======= =========== ======== === ==== =====
 # This makefile requires that you have the following 
 # environment variables defined: 
 #  ROMS_ROOT, NETCDF_ROOT, NETCDFC_ROOT, MPIHOME, FCOMP
-#
-#  Example entries in a .bashrc file:
-#
-# export FCOMP=mpiifx
-# export MPIHOME=/opt/intel/oneapi/mpi/latest
-# export NETCDF_ROOT=/opt/netcdf-fortran-4.6.1
-# export NETCDFC_ROOT=/opt/netcdf-c-4.9.2
-#
-# export LD_LIBRARY_PATH=${MPIHOME}/lib/:$LD_LIBRARY_PATH
-# export LD_LIBRARY_PATH=${NETCDFC_ROOT}/lib/:$LD_LIBRARY_PATH
-# export LD_LIBRARY_PATH=${NETCDF_ROOT}/lib/:$LD_LIBRARY_PATH
+#  on Sherlock FCOMP should be h5pfc
 
-# export ROMS_ROOT=/home/username/ucla-roms
-# export PATH=${ROMS_ROOT}/Tools-Roms:$PATH
-# export PATH=${NETCDFC_ROOT}/bin:$PATH
-# export PATH=${NETCDF_ROOT}/bin:$PATH
-
-#export MARBL_ROOT=/home/username/MARBL
-
-
-#
 .SUFFIXES: .o .f .F .f90
-
-USEMARBL=FALSE
 
 .F.o:
 	@$(CPP) -P $*.F | mpc > $*.f
-	$(FCOMP) -c $(FFLAGS) $(ICDF) -o $*.o $*.f
+	$(FCOMP) -c $(FFLAGS) -o $*.o $*.f $(INCS)
 	@/bin/rm -f $*.f
 .F.f:
 	$(CPP) -P  $*.F | mpc > $*.f
 .f.o:
-	$(FCOMP) -c $(FFLAGS) $(ICDF) -o $*.o $*.f
+	$(FCOMP) -c $(FFLAGS) -o $*.o $*.f $(INCS)
 .f90.o:
 	$(FCOMP) -c $(FFLAGS) -o $*.o $*.f90
 
-     CPP = cpp -traditional
+        CPP = cpp -traditional
 
-# Path names (non-hydrostatic, MARBL and NetCDF libraries):
-	MARBL_INC = ${MARBL_ROOT}/include/intel-mpi
-	MARBL_LIB = -L${MARBL_ROOT}/lib -lmarbl-intel-mpi
+# Path names (non-hydrostatic and NetCDF libraries):
 
 	NHMG_ROOT = $(ROMS_ROOT)/NHMG
-	NHMG_INC  = $(NHMG_ROOT)/include
+	NHMG_INC  = -I$(NHMG_ROOT)/include
 	NHMG_LIB  = -L$(NHMG_ROOT)/lib -lnhmg
 
-	NETCDF_INC = $(NETCDF_ROOT)/include
+	NETCDF_INC = -I$(NETCDF_ROOT)/include
 	NETCDF_LIB = -L$(NETCDF_ROOT)/lib -lnetcdff
 	NETCDFC_LIB = -L$(NETCDFC_ROOT)/lib -lnetcdf
-
-	MPI_INC = ${MPIHOME}/include/mpi
-
-
-ifeq ($(USEMARBL),TRUE)
-	LCDF = $(NHMG_LIB) $(NETCDF_LIB) $(MARBL_LIB)
-else
-	LCDF = $(NHMG_LIB) $(NETCDF_LIB)
-endif
-
-ifeq ($(FCOMP),mpiifx)
-	CPATH = ${MPI_INC}:${NHMG_INC}:${NETCDF_INC}:${MARBL_INC}
-	ICDF = 
-else
-	ICDF = -I$(MPI_INC) -I$(NHMG_INC) -I$(NETCDF_INC) -I$(MARBL_INC)
-endif
-
+	
+	INCS = $(NETCDF_INC) $(NHMG_INC)
+	LIBS = $(NETCDF_LIB) $(NETCDFC_LIB) $(NHMG_LIB)
 
 # Large memory runs (e.g. for bgc):
 #	LARGE_MEM_FLAG = -mcmodel=medium
 #	LARGE_MEM_FLAG = -mcmodel=large
 
-# Fortran compiler flags:
-#	CFTFLAGS = -pc64 -auto
-	CFTFLAGS = 
 
 # Fortran loader name and options: 
- 	LDR = $(FCOMP)  $(CFTFLAGS)
+ 	LDR = $(FCOMP)
 
-# Fortran compiler options/flags: (Legacy to have both CFTFLAGS & FFLAGS)
-# - Optimized: (-ip = additional interprocedural optimizations for single-file compilation. )
-	FFLAGS = -O3 -ipo -fp-model fast
+# Fortran compiler options/flags:
+	FFLAGS = -O3 -flto -ffast-math
+
 # - uncomment for debugging:
-#	FFLAGS = -g -traceback -check all -CA -CB -CS
-#	FFLAGS = -g -traceback -CA -CB -CS
-# - uncomment for traceback only (traceback not as accurate as full debug mode...)
-#	FFLAGS = -O3 -ip -traceback
-# - for code_check script ensure consistency with -fp-model strict:
-#	FFLAGS = -O3 -fp-model strict
-# - for profiling with vtune to see source code, also comment '@/bin/rm -f $*.f':
-#	FFLAGS = -O3 -g -debug inline-debug-info -parallel-source-info=2
-# - for profiling with grof to see source code, also comment '@/bin/rm -f $*.f':
-#	FFLAGS = -O3 -ip -pg
+#	FFLAGS = -g -fbacktrace -check=all
 
 
 KRNSRC = 		param.F dimensions.F	ocean_vars.F tracers.F\
@@ -142,7 +93,7 @@ IOSRC = checkdims.F	insert_node.F\
 
 # ROMS excutable (This is the first target and hence the default):
 $(SBIN): $(OBJS)
-	$(LDR) $(FFLAGS) $(LDFLAGS) -o a.out $(OBJS) $(LCDF)
+	$(LDR) $(FFLAGS) $(LDFLAGS) -o a.out $(OBJS) $(LIBS)
 	mv a.out $(SBIN)
 
 # Everything
