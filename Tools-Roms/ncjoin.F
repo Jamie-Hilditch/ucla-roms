@@ -112,6 +112,12 @@ c--#define VERBOSE
       integer, dimension(maxdims,maxvars) :: dimids
       integer*8 max_buff_size, alloc_buff_size
       real*8, allocatable, dimension(:) :: buff
+      character(len=1), allocatable, dimension(:) :: buff_char 
+      integer*1, allocatable, dimension(:) :: buff_int1 
+      integer*2, allocatable, dimension(:) :: buff_int2
+      integer*4, allocatable, dimension(:) :: buff_int4
+      real*4, allocatable, dimension(:) :: buff_real4
+      real*8, allocatable, dimension(:) :: buff_real8
 #ifdef FAST_MODE
       integer count1(maxdims)
       integer*8 max_bfr_out, alloc_bfr_out
@@ -1602,22 +1608,22 @@ c**           endif
                     net_gray_clk=net_gray_clk+inc_clk
 # endif
                     if (vartype(i) .eq. nf_char) then
-                      call assembly_text (buff, count, bfr_out,
+                      call assembly_text (buff_char, count, bfr_out,
      &                                 start1,count1, vdims(i))
                     elseif (vartype(i) .eq. nf_byte) then
-                      call assembly_byte (buff, count, bfr_out, 
+                      call assembly_byte (buff_int1, count, bfr_out, 
      &                                 start1,count1, vdims(i))
                     elseif (vartype(i) .eq. nf_short) then
-                      call assembly_int2 (buff, count, bfr_out,
+                      call assembly_int2 (buff_int2, count, bfr_out,
      &                                 start1,count1, vdims(i))
                     elseif (vartype(i) .eq. nf_int) then
-                      call assembly_int  (buff, count, bfr_out,
+                      call assembly_int  (buff_int4, count, bfr_out,
      &                                 start1,count1, vdims(i))
                     elseif (vartype(i) .eq. nf_float) then
-                      call assembly_real (buff, count, bfr_out,
+                      call assembly_real (buff_real4, count, bfr_out,
      &                                 start1,count1, vdims(i))
                     elseif (vartype(i) .eq. nf_double) then
-                      call assembly_double (buff,count,bfr_out,
+                      call assembly_double (buff_real8,count,bfr_out,
      &                                 start1,count1, vdims(i))
                     endif
 # ifdef TIMING
@@ -1636,22 +1642,22 @@ c**           endif
 
                     if (vartype(i) .eq. nf_char) then
                       ierr=nf_put_vara_text   (nctarg, varid(i),
-     &                                     start1, count, buff)
+     &                                     start1, count, buff_char)
                     elseif (vartype(i) .eq. nf_byte) then
                       ierr=nf_put_vara_int1   (nctarg, varid(i),
-     &                                     start1, count, buff)
+     &                                     start1, count, buff_int1)
                     elseif (vartype(i) .eq. nf_short) then
                       ierr=nf_put_vara_int2   (nctarg, varid(i),
-     &                                     start1, count, buff)
+     &                                     start1, count, buff_int2)
                     elseif (vartype(i) .eq. nf_int) then
                       ierr=nf_put_vara_int    (nctarg, varid(i),
-     &                                     start1, count, buff)
+     &                                     start1, count, buff_int4)
                     elseif (vartype(i) .eq. nf_float) then
                        ierr=nf_put_vara_real  (nctarg, varid(i),
-     &                                     start1, count, buff)
+     &                                     start1, count, buff_real4)
                     elseif (vartype(i) .eq. nf_double) then
                        ierr=nf_put_vara_double(nctarg, varid(i),
-     &                                     start1, count, buff)
+     &                                     start1, count, buff_real8)
                     endif
 # ifdef TIMING
                     if (ierr.eq.nf_noerr) then
