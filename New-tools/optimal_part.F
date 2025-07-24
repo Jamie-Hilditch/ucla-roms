@@ -62,7 +62,9 @@
 
       ! add variables
       vname='p'
-      dname=(/'xi_rho','eta_rho'/)
+!      dname=(/'xi_rho','eta_rho'/)
+      dname(1) = 'xi_rho'
+      dname(2) = 'eta_rho'
       dsize=(/gnx+2,gny+2/)
       varid=nccreate(npid,vname,dname,dsize)
 
