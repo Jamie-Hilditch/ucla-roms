@@ -1744,7 +1744,7 @@
 ! ----------------------------------------------------------------------
       subroutine system_mem_usage(valueRSS) ![
 
-      use ifport !if on intel compiler
+!      use ifport !if on intel compiler
 
       implicit none
       integer, intent(out) :: valueRSS
@@ -1759,30 +1759,30 @@
       valueRSS = -1    ! return negative number if not found
 
       !--- get process ID
-      pid = getpid()
-      write(pid_char, '(I8)') pid
-      filename = '/proc/' // trim(adjustl(pid_char)) // '/status'
+!      pid = getpid()
+!      write(pid_char, '(I8)') pid
+!      filename = '/proc/' // trim(adjustl(pid_char)) // '/status'
 
       !--- read system file
-      inquire(file = filename, exist = ifxst)
-      if (.not. ifxst) then
-        write (*,*) 'system file does not exist'
-        return
-      endif
+!      inquire(file = filename, exist = ifxst)
+!      if (.not. ifxst) then
+!        write (*,*) 'system file does not exist'
+!        return
+!      endif
 
-      open(unit = 100, file = filename, action = 'read')
-      do
-        read(100, '(a)', iostat=ios) line
-        if (ios /= 0) then
-          print *, 'error in RSS calc.'
-          exit
-        endif
-        if (line(1:6) .eq. 'VmRSS:') then
-          read(line(7:), *) valueRSS
-          exit  ! Exit loop when VmRSS line is found
-        endif
-      enddo
-      close(100)
+!      open(unit = 100, file = filename, action = 'read')
+!      do
+!        read(100, '(a)', iostat=ios) line
+!        if (ios /= 0) then
+!          print *, 'error in RSS calc.'
+!          exit
+!        endif
+!        if (line(1:6) .eq. 'VmRSS:') then
+!          read(line(7:), *) valueRSS
+!          exit  ! Exit loop when VmRSS line is found
+!        endif
+!      enddo
+!      close(100)
 
       end subroutine system_mem_usage !]
 ! ----------------------------------------------------------------------
