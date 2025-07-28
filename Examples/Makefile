@@ -35,7 +35,7 @@ all:
 #       cppdefs.opt.
 
 # for adding git hash:
-tag := $(shell git rev-parse HEAD)
+tag := $(shell cd $(ROMS_ROOT) && git rev-parse HEAD)
 tline1 := git_hash=
 tline2:= 'git_hash=\"$(tag)\"'
 show_tag:

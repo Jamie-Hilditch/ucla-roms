@@ -26,7 +26,7 @@
 .F.o:
 	@$(CPP) -P $*.F | mpc > $*.f
 	$(FCOMP) -c $(FFLAGS) -o $*.o $*.f $(INCS)
-	@/bin/rm -f $*.f
+#	@/bin/rm -f $*.f
 .F.f:
 	$(CPP) -P  $*.F | mpc > $*.f
 .f.o:

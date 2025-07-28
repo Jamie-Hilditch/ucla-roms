@@ -39,8 +39,8 @@
 
 # --------------------------------------------------------------------
 
-ALL = partit ncjoin ncjoin_mpi extract_data_join nc3to4z zslice sample
-#ALL = partit ncjoin_mpi extract_data_join nc3to4z
+#ALL = partit ncjoin ncjoin_mpi extract_data_join nc3to4z zslice sample
+ALL = partit ncjoin_mpi extract_data_join nc3to4z
 #r2r_bry r2r_match_topo r2r_init
 
 all:	$(info MAKING ROMS TOOLS:) mpc $(ALL)
