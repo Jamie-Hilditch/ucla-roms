@@ -25,52 +25,36 @@
 
 .F.o:
 	@$(CPP) -P $*.F | mpc > $*.f
-	$(FCOMP) -c $(FFLAGS) -o $*.o $*.f
+	$(FCOMP) -c $(FFLAGS) -o $*.o $*.f $(INCS)
 	@/bin/rm -f $*.f
 .F.f:
 	$(CPP) -P  $*.F | mpc > $*.f
 .f.o:
-	$(FCOMP) -c $(FFLAGS) -o $*.o $*.f $(LCDF)
+	$(FCOMP) -c $(FFLAGS) -o $*.o $*.f $(INCS)
 
      CPP = cpp -traditional
 
 # Path names (non-hydrostatic & NetCDF libraries):
 
-	NHMG_ROOT = $(ROMS_ROOT)/NHMG
-	NHMG_INC  = $(NHMG_ROOT)/include
-	NHMG_LIB  = -L$(NHMG_ROOT)/lib -lnhmg
+#	NHMG_ROOT = $(ROMS_ROOT)/NHMG
+#	NHMG_INC  = -I$(NHMG_ROOT)/include
+#	NHMG_LIB  = -L$(NHMG_ROOT)/lib -lnhmg
 
 	ROMS_SRC  = $(ROMS_ROOT)/src
 
-	NETCDF_INC = $(NETCDF_ROOT)/include
+	NETCDF_INC = -I$(NETCDF_ROOT)/include
 	NETCDF_LIB = -L$(NETCDF_ROOT)/lib -lnetcdff
 	NETCDFC_LIB = -L$(NETCDFC_ROOT)/lib -lnetcdf
 
-	MPI_INC = ${MPIHOME}/include/mpi
-
-	LCDF = $(NETCDF_LIB) $(NETCDFC_LIB)
-
-CPATH = ${MPI_INC}:${NETCDF_INC}
-
-# MARBL
-#       MARBL_INC = -I${MARBL_ROOT}/include/intel-mpi
-#   	MARBL_LIB = -lmarbl-intel-mpi -L${MARBL_ROOT}/lib
-
-
-# Large memory runs (e.g. for bgc):
-#	LARGE_MEM_FLAG = -mcmodel=medium
-#	LARGE_MEM_FLAG = -mcmodel=large
-
-# Fortran compiler flags:
-#	CFTFLAGS = -pc64 -auto
-	CFTFLAGS = 
+	LIBS = $(NETCDF_LIB) $(NETCDFC_LIB)
+	INCS = $(NETCDF_INC)
 
 # Fortran loader name and options: 
- 	LDR = $(FCOMP)  $(CFTFLAGS)
+ 	LDR = $(FCOMP) 
 
 # Fortran compiler options/flags: (Legacy to have both CFTFLAGS & FFLAGS)
 # - Optimized: (-ip = additional interprocedural optimizations for single-file compilation. )
-        FFLAGS = -O3 -ipo -fp-model fast
+        FFLAGS = -O3 -flto -ffast-math
 # - uncomment for debugging:
 #	FFLAGS = -g -traceback -check all -CA -CB -CS
 #	FFLAGS = -g -traceback -CA -CB -CS
@@ -102,19 +86,19 @@ all: depend partit partmap optimal ncjoin
 
 partit:  $(PBJS)
 	@echo 'Making: $(PBJS)'
-	$(LDR) $(FFLAGS) $(LDFLAGS) -o partit $(PBJS) $(LCDF)
+	$(LDR) $(FFLAGS) $(LDFLAGS) -o partit $(PBJS) $(LIBS)
 
 partmap:  $(MBJS)
 	@echo 'Making: $(MBJS)'
-	$(LDR) $(FFLAGS) $(LDFLAGS) -o partmap $(MBJS) $(LCDF)
+	$(LDR) $(FFLAGS) $(LDFLAGS) -o partmap $(MBJS) $(LIBS)
 
 optimal:  $(OBJS)
 	@echo 'Making: $(OBJS)'
-	$(LDR) $(FFLAGS) $(LDFLAGS) -o optimal $(OBJS) $(LCDF)
+	$(LDR) $(FFLAGS) $(LDFLAGS) -o optimal $(OBJS) $(LIBS)
 
 ncjoin:  $(JBJS)
 	@echo 'Making: $(JBJS)'
-	$(LDR) $(FFLAGS) $(LDFLAGS) -o ncjoin $(JBJS) $(LCDF)
+	$(LDR) $(FFLAGS) $(LDFLAGS) -o ncjoin $(JBJS) $(LIBS)
 
 depend:  # Note: cross_matrix no longer used
 	@makedepf90 $(PSRC) $(MSRC) $(OSRC) $(JSRC) > Make.depend

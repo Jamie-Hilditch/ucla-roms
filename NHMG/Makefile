@@ -1,19 +1,19 @@
+# Makefile for the non-hydrostatic module
+# Requires the environment variable FCOMP to be set
+
+
 # This line de-activates all implicit rules
 .SUFFIXES:
 
-# Fortran Compiler
-FC = ifx
-
 # Normal options for the compiler
-#FFLAGS =  -O3 -fp-model source -I/opt/mpich-3.2/include/
-FFLAGS =  -O3 -fp-model source -I/home/devin/mpich-install/include
+FFLAGS = -O3
 
 # Debugging options for the compiler
-#FFLAGS =  -g -check -warn
+#FFLAGS =  -g -check=all -WALL
 
 # Rule to make *.o out of *.f90
 %.o : %.f90
-	$(FC) -c $(FFLAGS)  $<
+	$(FCOMP) -c $(FFLAGS)  $<
 
 
 sources = mg_autotune.f90 mg_cst.f90 mg_gather.f90 \

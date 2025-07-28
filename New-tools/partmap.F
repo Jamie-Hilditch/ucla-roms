@@ -61,7 +61,9 @@
        if (ierr/=0) call handle_ierr(ierr,'creating: ','part.nc')
 
       ! add variables
-      dname=(/'xi_rho','eta_rho'/)
+!      dname=(/'xi_rho','eta_rho'/)
+      dname(1) = 'xi_rho'
+      dname(2) = 'eta_rho'
       dsize=(/gnx+2,gny+2/)
       vname1='node'
       varid=nccreate(npid,vname1,dname,dsize)

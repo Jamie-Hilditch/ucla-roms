@@ -524,11 +524,11 @@
         do iatt = 1,ngatt
           ierr = nf90_inq_attname(ncid,nf90_global,iatt,att_name)
           ! if present, these attributes would mess up the writes above
-          if (index(att_name,'start_idx')) cycle
-          if (index(att_name,'end_idx')) cycle
-          if (index(att_name,'neighbors')) cycle
-          if (index(att_name,'subdompos')) cycle
-          if (index(att_name,'globaldims')) cycle
+          if (index(att_name,'start_idx') > 0) cycle
+          if (index(att_name,'end_idx') > 0) cycle
+          if (index(att_name,'neighbors') > 0) cycle
+          if (index(att_name,'subdompos') > 0) cycle
+          if (index(att_name,'globaldims') > 0) cycle
           ierr = nf90_copy_att(ncid,nf90_global,att_name,npid,nf90_global)
         enddo 
 
@@ -1744,7 +1744,7 @@
 ! ----------------------------------------------------------------------
       subroutine system_mem_usage(valueRSS) ![
 
-      use ifport !if on intel compiler
+!      use ifport !if on intel compiler
 
       implicit none
       integer, intent(out) :: valueRSS
@@ -1759,30 +1759,30 @@
       valueRSS = -1    ! return negative number if not found
 
       !--- get process ID
-      pid = getpid()
-      write(pid_char, '(I8)') pid
-      filename = '/proc/' // trim(adjustl(pid_char)) // '/status'
+!      pid = getpid()
+!      write(pid_char, '(I8)') pid
+!      filename = '/proc/' // trim(adjustl(pid_char)) // '/status'
 
       !--- read system file
-      inquire(file = filename, exist = ifxst)
-      if (.not. ifxst) then
-        write (*,*) 'system file does not exist'
-        return
-      endif
+!      inquire(file = filename, exist = ifxst)
+!      if (.not. ifxst) then
+!        write (*,*) 'system file does not exist'
+!        return
+!      endif
 
-      open(unit = 100, file = filename, action = 'read')
-      do
-        read(100, '(a)', iostat=ios) line
-        if (ios /= 0) then
-          print *, 'error in RSS calc.'
-          exit
-        endif
-        if (line(1:6) .eq. 'VmRSS:') then
-          read(line(7:), *) valueRSS
-          exit  ! Exit loop when VmRSS line is found
-        endif
-      enddo
-      close(100)
+!      open(unit = 100, file = filename, action = 'read')
+!      do
+!        read(100, '(a)', iostat=ios) line
+!        if (ios /= 0) then
+!          print *, 'error in RSS calc.'
+!          exit
+!        endif
+!        if (line(1:6) .eq. 'VmRSS:') then
+!          read(line(7:), *) valueRSS
+!          exit  ! Exit loop when VmRSS line is found
+!        endif
+!      enddo
+!      close(100)
 
       end subroutine system_mem_usage !]
 ! ----------------------------------------------------------------------
