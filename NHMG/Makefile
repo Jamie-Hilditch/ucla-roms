@@ -1,1 +1,1 @@
-NHMG/Makefile.sherlock
+Makefile.sherlock

@@ -1,1 +1,1 @@
-src/Makefile.sherlock
+Makefile.sherlock

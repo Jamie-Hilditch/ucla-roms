@@ -1,1 +1,1 @@
-Tools-Roms/Makefile.sherlock
+Makefile.sherlock
