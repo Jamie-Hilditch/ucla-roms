@@ -34,11 +34,16 @@
       subroutine init_arrays_flux_frc  ![
       implicit none
 
-      allocate( nc_sustr%vdata(GLOBAL_2D_ARRAY,2) ) ;nc_sustr%vdata = 0
-      allocate( nc_svstr%vdata(GLOBAL_2D_ARRAY,2) ) ;nc_svstr%vdata = 0
-      allocate( nc_shflx%vdata(GLOBAL_2D_ARRAY,2) ) ;nc_shflx%vdata = 0
-      allocate( nc_swflux%vdata(GLOBAL_2D_ARRAY,2) );nc_swflux%vdata = 0
-      allocate( nc_swrad%vdata(GLOBAL_2D_ARRAY,2) ) ;nc_swrad%vdata = 0
+      allocate( nc_sustr%vdata(GLOBAL_2D_ARRAY,2) )
+      nc_sustr%vdata = 0
+      allocate( nc_svstr%vdata(GLOBAL_2D_ARRAY,2) )
+      nc_svstr%vdata = 0
+      allocate( nc_shflx%vdata(GLOBAL_2D_ARRAY,2) )
+      nc_shflx%vdata = 0
+      allocate( nc_swflux%vdata(GLOBAL_2D_ARRAY,2) )
+      nc_swflux%vdata = 0
+      allocate( nc_swrad%vdata(GLOBAL_2D_ARRAY,2) )
+      nc_swrad%vdata = 0
 
       if (interp_frc==1) then
         nc_sustr%coarse=1
