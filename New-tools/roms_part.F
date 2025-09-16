@@ -1599,7 +1599,8 @@
               select case(ncinfo%vartype(ivar))
               case('r')
                 if ((bryvariable=='w').or.(bryvariable=='e')) then
-                  allocate(var3d(lj0:lj1,1,1)); allocate(tmp3d(lj0:lj1,1,1))
+                  allocate(var3d(lj0:lj1,1,1))
+                  allocate(tmp3d(lj0:lj1,1,1))
                   is = j0; ie = j1
                   startw = (/lj0,record,1,1/)
                 elseif ((bryvariable=='s').or.(bryvariable=='n')) then
