@@ -76,3 +76,6 @@ benchmark.result_laptop
 .project
 .cproject
 .pydevproject
+
+# vscode
+.vscode/
